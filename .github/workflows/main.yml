@@ -1,19 +1,37 @@
 name: Build Mr Dinuka APK
-on: [push]
+
+on:
+  push:
+    branches: [ "main" ]
+
 jobs:
   build:
     runs-on: ubuntu-latest
+
     steps:
-      - Alignment: true
-      - uses: actions/checkout@v3
-      - name: Unzip Project
-        run: unzip *.zip
-      - uses: subosito/flutter-action@v2
+      - name: Checkout Repository
+        uses: actions/checkout@v3
+
+      - name: Setup Java Environment
+        uses: actions/setup-java@v3
+        with:
+          distribution: 'zulu'
+          java-version: '12.x'
+
+      - name: Setup Flutter Engine
+        uses: subosito/flutter-action@v2
         with:
           channel: 'stable'
-      - name: Build APK
+
+      - name: Clean and Get Packages
+        run: |
+          flutter clean
+          flutter pub get
+
+      - name: Build Android APK
         run: flutter build apk --release
-      - name: Upload APK
+
+      - name: Upload Finished APK
         uses: actions/upload-artifact@v3
         with:
           name: Mr-Dinuka-W-App
